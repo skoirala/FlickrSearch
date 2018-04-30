@@ -1,0 +1,6 @@
+Pods/
+*.dSYM
+*.pbxuser
+!default.pbxuser
+!default.perspectivev3
+xcuserdata/
