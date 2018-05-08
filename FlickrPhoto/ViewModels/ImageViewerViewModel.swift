@@ -10,10 +10,10 @@ class ImageViewerViewModel {
 
     private let disposeBag: DisposeBag
     private let router: Router
-    private let searchRequest: PaginatedSearchRequestType
+    private let searchRequest: FlickerSearchRequest
 
     init(router: Router,
-         searchRequest: PaginatedSearchRequestType,
+         searchRequest: FlickerSearchRequest,
          selectedItemIndex: Int) {
         self.router = router
         self.searchRequest = searchRequest
@@ -21,10 +21,10 @@ class ImageViewerViewModel {
 
         disposeBag = DisposeBag()
         publishRelay = PublishRelay()
-        publishRelay.bind(to: searchRequest.nextPageTrigger)
+        publishRelay.bind(to: searchRequest.nextTrigger)
             .disposed(by: disposeBag)
 
-        self.models = Driver.combineLatest(searchRequest.models, searchRequest.hasNextPage) { models, loading  in
+        self.models = Driver.combineLatest(searchRequest.model, searchRequest.canLoadNextPage) { models, loading  in
             if loading {
                 let items = models.map { LargeImageItem.photo($0) }
                 let loadingItem = LargeImageItem.loading
@@ -43,6 +43,6 @@ class ImageViewerViewModel {
     }
 
     func showUser(for photo: Photo) {
-        router.showUser(photo: photo, with: searchRequest)
+        router.showUser(photo: photo)
     }
 }

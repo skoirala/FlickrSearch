@@ -4,61 +4,78 @@ import Moya
 import Action
 import RxDataSources
 
-class FlickrPhotoSearchViewModel: FlickrPhotoSearchViewModelType {
+class FlickrPhotoSearchViewModel {
+
+    enum ResultType {
+        case reset
+        case nextPage(PhotoResponse)
+    }
 
     func showPhotoView(at indexPath: IndexPath) {
-        router.showImageCollection(at: indexPath, with: flickrSearchRequest)
+        router.showImageCollection(at: indexPath, with: searchRequest)
     }
 
     var model: Driver<[SectionItem<Photo>]> {
-        return flickrSearchRequest.models
+        return searchRequest.model
             .map { [SectionItem(model: "", items: $0)] }
+
     }
 
     var canLoadNextPage: Driver<Bool> {
-        return flickrSearchRequest.hasNextPage
+        return searchRequest.canLoadNextPage.debug()
     }
 
     var isLoading: Driver<Bool> {
-        return flickrSearchRequest.isLoading
+        return searchRequest.isLoading
     }
 
-    var errorText: Driver<String> {
-        return flickrSearchRequest.errorText
-    }
-
-    var hasError: Driver<Bool> {
-        return flickrSearchRequest.hasError
+    var emptyResult: Driver<Bool> {
+        return searchRequest.isResultEmpty
     }
 
     var searchResultChanged: Driver<Bool> {
-        return flickrSearchRequest.newSearchResultInitialPageLoaded
+        return searchRequest.isLoadingNewTarget
     }
 
-    func bind(searchText: BehaviorRelay<String>) {
-        searchText.bind(to: flickrSearchRequest.searchText)
+    func bind(searchText: PublishRelay<String>) {
+        searchText.bind(to: self.searchText)
             .disposed(by: disposeBag)
     }
 
     func bind(nextPageTrigger: ControlEvent<Void>) {
-        nextPageTrigger.bind(to: flickrSearchRequest.nextPageTrigger)
+        nextPageTrigger.bind(to: self.nextPageTrigger)
             .disposed(by: disposeBag)
     }
 
-    let initialSearch: String
+    let searchRequest: FlickerSearchRequest
+
+    let search: FlickrSearchTarget
     let searchEnabled: Bool
 
-    private let flickrSearchRequest: PaginatedSearchRequestType
     private let disposeBag = DisposeBag()
     private let router: Router
 
-    required init(initialSearch: String,
+    private let nextPageTrigger: PublishRelay<()>
+    private let searchText: PublishRelay<String>
+
+    required init(search: FlickrSearchTarget,
                   router: Router,
-                  flickrSearchRequest: PaginatedSearchRequestType,
                   searchEnabled: Bool) {
-        self.initialSearch = initialSearch
+        self.search = search
         self.router = router
-        self.flickrSearchRequest = flickrSearchRequest
         self.searchEnabled = searchEnabled
+
+        nextPageTrigger = PublishRelay()
+        searchText = PublishRelay()
+
+        // triggers event initially
+        let searchTarget = BehaviorRelay<FlickrSearchTarget>(value: search)
+
+        searchText.map { FlickrSearchTarget.text($0) }
+            .bind(to: searchTarget)
+            .disposed(by: disposeBag)
+
+        searchRequest = FlickerSearchRequest(target: searchTarget,
+                                             nextTrigger: nextPageTrigger)
     }
 }

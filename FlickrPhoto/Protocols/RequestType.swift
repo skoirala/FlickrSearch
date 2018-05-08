@@ -2,13 +2,13 @@ import RxSwift
 import RxCocoa
 import Moya
 
-protocol RxRequestType {
+protocol RequestType {
 
     associatedtype RequestTarget: TargetType
 
     associatedtype Model: EmptyValueType & Decodable
 
-    var loadTrigger: PublishRelay<RequestTarget> { get }
+    var loadTrigger: Observable<RequestTarget> { get }
 
     var isLoading: Driver<Bool> { get }
 

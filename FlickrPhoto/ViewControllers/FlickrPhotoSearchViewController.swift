@@ -6,8 +6,8 @@ import CHTCollectionViewWaterfallLayout
 
 class FlickrPhotoSearchViewController: UIViewController {
 
-    private let  viewModel: FlickrPhotoSearchViewModelType!
-    private let searchText: BehaviorRelay<String>!
+    private let  viewModel: FlickrPhotoSearchViewModel!
+    private let searchText: PublishRelay<String>!
     private let disposeBag = DisposeBag()
     private var dataSource: RxCollectionViewSectionedReloadDataSource<SectionItem<Photo>>!
 
@@ -20,9 +20,9 @@ class FlickrPhotoSearchViewController: UIViewController {
 
     private var searchViewController: UISearchController!
 
-    init(with viewModel: FlickrPhotoSearchViewModelType) {
+    init(with viewModel: FlickrPhotoSearchViewModel) {
         self.viewModel = viewModel
-        searchText = BehaviorRelay<String>(value: viewModel.initialSearch)
+        searchText = PublishRelay<String>()
 
         super.init(nibName: nil,
                    bundle: nil)
@@ -114,6 +114,7 @@ class FlickrPhotoSearchViewController: UIViewController {
         let suggestionsViewController = SearchSuggestionsViewController(viewModel: searchSuggestionViewModel)
         searchViewController = UISearchController(searchResultsController: suggestionsViewController)
         searchViewController.searchResultsUpdater = suggestionsViewController
+        searchViewController.searchBar.keyboardAppearance = .dark
         searchViewController.hidesNavigationBarDuringPresentation = true
         searchViewController.dimsBackgroundDuringPresentation = false
         collectionView.alwaysBounceVertical = true
@@ -156,7 +157,8 @@ class FlickrPhotoSearchViewController: UIViewController {
     private func setupBindings() {
         let searchBar = searchViewController.searchBar
 
-        searchBar.rx.searchChangedOnReturn.bind(to: searchText)
+        searchBar.rx.searchChangedOnReturn
+            .bind(to: searchText)
             .disposed(by: disposeBag)
 
         searchBar.rx.searchButtonClicked
@@ -169,11 +171,14 @@ class FlickrPhotoSearchViewController: UIViewController {
             .bind(to: searchViewController.rx.isActive)
             .disposed(by: disposeBag)
 
-        viewModel.hasError.map { has in !has }
+        viewModel.emptyResult
+            .map { isEmpty in !isEmpty }
             .drive(errorView.rx.isHidden)
             .disposed(by: disposeBag)
 
-        viewModel.errorText
+        viewModel.emptyResult
+            .filter { $0 == true }
+            .map { _ in "No results found" }
             .drive(errorLabel.rx.text)
             .disposed(by: disposeBag)
 
@@ -193,6 +198,10 @@ class FlickrPhotoSearchViewController: UIViewController {
             .disposed(by: disposeBag)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        collectionView.reloadData()
+    }
 }
 
 // MARK: Private methods

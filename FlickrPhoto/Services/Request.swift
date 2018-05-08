@@ -3,22 +3,22 @@ import RxCocoa
 import Action
 import Moya
 
-class RxRequest<T: TargetType, M: EmptyValueType & Decodable>: RxRequestType {
+class Request<T: TargetType, M: EmptyValueType & Decodable>: RequestType {
 
     let disposeBag: DisposeBag
 
-    let loadTrigger: PublishRelay<T>
+    let loadTrigger: Observable<T>
     let model: Driver<M>
     let isLoading: Driver<Bool>
 
     private let action: Action<T, M>
 
-    init(loadTrigger: PublishRelay<T>) {
+    init(loadTrigger: Observable<T>) {
         self.loadTrigger = loadTrigger
 
         disposeBag = DisposeBag()
 
-        let provider = MoyaProvider<T>()
+        let provider = MoyaProvider<T>(plugins: [NetworkLoggerPlugin()])
 
         let model = BehaviorRelay(value: M.emptyValue)
 
@@ -32,7 +32,11 @@ class RxRequest<T: TargetType, M: EmptyValueType & Decodable>: RxRequestType {
         action.elements
             .bind(to: model)
             .disposed(by: disposeBag)
+        isLoading = action.executing
+            .asDriver(onErrorJustReturn: false)
 
-        isLoading = action.executing.asDriver(onErrorJustReturn: false)
+        loadTrigger.bind(to: action.inputs)
+            .disposed(by: disposeBag)
+
     }
 }

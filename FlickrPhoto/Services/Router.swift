@@ -15,15 +15,10 @@ class Router {
         Logging.URLRequests = { _ in
             return false
         }
+        let searchTarget: FlickrSearchTarget = .text("Wild Animals")
 
-        let paginationRequest = RxPaginationRequest<SearchFlickrPhoto, PhotoResponse> { photoResponse in
-            return photoResponse.pageDetail
-        }
-
-        let searchResult = FlickerSearchRequest(paginationRequest: paginationRequest)
-        let viewModel = FlickrPhotoSearchViewModel(initialSearch: "Wild Animals",
+        let viewModel = FlickrPhotoSearchViewModel(search: searchTarget,
                                                    router: self,
-                                                   flickrSearchRequest: searchResult,
                                                    searchEnabled: true)
 
         let rootViewController = FlickrPhotoSearchViewController(with: viewModel)
@@ -35,7 +30,7 @@ class Router {
     }
 
     func showImageCollection(at indexPath: IndexPath,
-                             with searchResult: PaginatedSearchRequestType) {
+                             with searchResult: FlickerSearchRequest) {
         let viewModel = ImageViewerViewModel(router: self,
                                                  searchRequest: searchResult,
                                                  selectedItemIndex: indexPath.item)
@@ -43,17 +38,12 @@ class Router {
         self.navigationController?.pushViewController(imageCollectionViewController, animated: true)
     }
 
-    func showUser(photo: Photo,
-                  with searchResult: PaginatedSearchRequestType) {
-        let paginationRequest = RxPaginationRequest<SearchFlickrPhoto, PhotoResponse> { photoResponse in
-            return photoResponse.pageDetail
-        }
+    func showUser(photo: Photo) {
 
-        let searchResult = FlickerSearchRequest(userId: photo.owner,
-                                                paginationRequest: paginationRequest)
-        let viewModel = FlickrPhotoSearchViewModel(initialSearch: photo.ownerName,
+        let searchTarget: FlickrSearchTarget = .user(photo.owner)
+
+        let viewModel = FlickrPhotoSearchViewModel(search: searchTarget,
                                                    router: self,
-                                                   flickrSearchRequest: searchResult,
                                                    searchEnabled: false)
         let viewController = FlickrPhotoSearchViewController(with: viewModel)
         navigationController.pushViewController(viewController,
