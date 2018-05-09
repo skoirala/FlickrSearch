@@ -8,7 +8,7 @@ class FlickrPhotoSearchViewModel {
 
     enum ResultType {
         case reset
-        case nextPage(PhotoResponse)
+        case nextPage(response: PhotoResponse)
     }
 
     func showPhotoView(at indexPath: IndexPath) {
@@ -18,11 +18,10 @@ class FlickrPhotoSearchViewModel {
     var model: Driver<[SectionItem<Photo>]> {
         return searchRequest.model
             .map { [SectionItem(model: "", items: $0)] }
-
     }
 
     var canLoadNextPage: Driver<Bool> {
-        return searchRequest.canLoadNextPage.debug()
+        return searchRequest.canLoadNextPage
     }
 
     var isLoading: Driver<Bool> {
@@ -47,10 +46,11 @@ class FlickrPhotoSearchViewModel {
             .disposed(by: disposeBag)
     }
 
-    let searchRequest: FlickerSearchRequest
+    private let searchRequest: FlickerSearchRequest
 
-    let search: FlickrSearchTarget
+    private let search: FlickrSearchTarget
     let searchEnabled: Bool
+    let title: Driver<String>
 
     private let disposeBag = DisposeBag()
     private let router: Router
@@ -70,6 +70,9 @@ class FlickrPhotoSearchViewModel {
 
         // triggers event initially
         let searchTarget = BehaviorRelay<FlickrSearchTarget>(value: search)
+
+        title = searchTarget.map { $0.contentTitle }
+                    .asDriver(onErrorJustReturn: "")
 
         searchText.map { FlickrSearchTarget.text($0) }
             .bind(to: searchTarget)

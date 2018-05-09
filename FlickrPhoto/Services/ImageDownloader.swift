@@ -34,8 +34,8 @@ class ImageDownloader {
             .subscribeOn(serialQueueScheduler)
             .map { UIImage(data: $0) ?? UIImage() }
             .observeOn(MainScheduler.instance)
-            .do(onNext: { image in
-                self.cache.setObject(image,
+            .do(onNext: { [weak self] image in
+                self?.cache.setObject(image,
                                      forKey: urlString as NSString)
             })
             .map { .remote($0) }
@@ -66,9 +66,9 @@ class ImageDownloader {
             return Disposables.create {
                 task.cancel()
             }
-            }.do(onNext: { progressImage in
+            }.do(onNext: { [weak self] progressImage in
                 if case .image(let image) = progressImage {
-                    self.cache.setObject(image,
+                    self?.cache.setObject(image,
                                          forKey: urlString as NSString)
 
                 }

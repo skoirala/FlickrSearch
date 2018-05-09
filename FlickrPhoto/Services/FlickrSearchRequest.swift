@@ -4,8 +4,8 @@ import RxCocoa
 class FlickerSearchRequest {
 
     let nextTrigger: PublishRelay<()>
+    let searchRequest: PaginationRequest<FlickrSearchTarget, PhotoResponse, PageDetail>
 
-    let searchRequest: PaginationRequest<FlickrSearchTarget, PhotoResponse, PageDetail>!
     enum ResultType {
         case reset
         case nextPage(PhotoResponse)

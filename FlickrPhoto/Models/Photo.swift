@@ -3,13 +3,17 @@ import RxDataSources
 struct Photo {
     let identifier: String
     let farm: Int
-    let owner: String
     let server: String
     let title: String
-    let ownerName: String
+    let owner: PhotoOwner
     let dateUpload: String
 
     let photoURLs: [PhotoURL]
+}
+
+struct PhotoOwner {
+    let identifier: String
+    let name: String
 }
 
 struct PhotoURL {
@@ -39,15 +43,18 @@ extension Photo: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         try identifier = container.decode(String.self, forKey: .identifier)
         try farm = container.decode(Int.self, forKey: .farm)
-        try owner = container.decode(String.self, forKey: .owner)
         try server = container.decode(String.self, forKey: .server)
         try title = container.decode(String.self, forKey: .title)
-        try ownerName = container.decode(String.self, forKey: .ownerName)
         try dateUpload = container.decode(String.self, forKey: .dateupload)
 
         let sizeTypes = ["c", "l", "m", "n", "q", "sq", "t", "z"]
         let photoUrlContainer = try decoder.container(keyedBy: PhotoURLAttributeKeys.self)
 
+        let ownerId = try container.decode(String.self, forKey: .owner)
+        let ownerName = try container.decode(String.self, forKey: .ownerName)
+
+        owner = PhotoOwner(identifier: ownerId,
+                           name: ownerName)
         try photoURLs = sizeTypes.reduce([]) { partial, sizeAttr in
             let heightRaw = "height_\(sizeAttr)"
             let widthRaw = "width_\(sizeAttr)"
@@ -96,7 +103,7 @@ extension Photo: IdentifiableType, Hashable, Equatable {
     typealias Identity = String
 
     var identity: String {
-        return owner + server + "\(farm)"
+        return owner.name + owner.identifier + server + "\(farm)"
     }
 
     var hashValue: Int {

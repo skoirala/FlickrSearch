@@ -15,7 +15,11 @@ class Router {
         Logging.URLRequests = { _ in
             return false
         }
-        let searchTarget: FlickrSearchTarget = .text("Wild Animals")
+
+        let owner = PhotoOwner(identifier: "68329145@N05",
+                               name: "")
+
+        let searchTarget: FlickrSearchTarget = .user(owner)
 
         let viewModel = FlickrPhotoSearchViewModel(search: searchTarget,
                                                    router: self,
@@ -45,7 +49,7 @@ class Router {
         let viewModel = FlickrPhotoSearchViewModel(search: searchTarget,
                                                    router: self,
                                                    searchEnabled: false)
-        let viewController = FlickrPhotoSearchViewController(with: viewModel)
+        let viewController = UserProfileViewController(with: viewModel)
         navigationController.pushViewController(viewController,
                                                 animated: true)
     }

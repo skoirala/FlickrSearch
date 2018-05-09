@@ -87,7 +87,14 @@ class ImageViewerViewController: UICollectionViewController {
         publishRelay.bind(to: viewModel.publishRelay)
             .disposed(by: disposeBag)
 
-        dataSource = RxCollectionViewSectionedReloadDataSource(configureCell: configureCell)
+        dataSource = RxCollectionViewSectionedReloadDataSource(configureCell: { [weak self] (dataSource: DataSourceType<LargeImageItem>, collectionView: UICollectionView, indexPath: IndexPath, item: LargeImageItem) -> UICollectionViewCell in
+            guard let strongSelf = self else { return UICollectionViewCell() }
+            return strongSelf.configureCell(dataSource: dataSource,
+                                            collectionView: collectionView,
+                                            indexPath: indexPath,
+                                            item: item)
+
+        })
 
         viewModel.models.drive(collectionView!.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
@@ -171,7 +178,7 @@ class ImageViewerViewController: UICollectionViewController {
             return
         }
 
-        let ownerName = item.ownerName
+        let ownerName = item.owner.name
         userNameLabel.setTitle(ownerName, for: .normal)
 
         if let dateInterval = TimeInterval(item.dateUpload) {

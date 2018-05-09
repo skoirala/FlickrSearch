@@ -4,6 +4,7 @@ import RxSwift
 class ImageCollectionViewCell: UICollectionViewCell {
 
     let imageView: UIImageView
+
     let progressView: DownloadProgressView
 
     var disposeBag: DisposeBag = DisposeBag()

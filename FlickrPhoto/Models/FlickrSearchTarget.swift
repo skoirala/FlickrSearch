@@ -9,8 +9,8 @@ struct FlickrSearchTarget: FlickrSearchTargetType {
         return FlickrSearchTarget(search: .search(text))
     }
 
-    static func user(_ userId: String) -> FlickrSearchTarget {
-        return FlickrSearchTarget(search: .userPhotos(userId))
+    static func user(_ owner: PhotoOwner) -> FlickrSearchTarget {
+        return FlickrSearchTarget(search: .userPhotos(owner))
     }
 
     init(search: FlickrSearch) {
@@ -50,8 +50,9 @@ struct FlickrSearchTarget: FlickrSearchTargetType {
     }
 
     var params: [String: String] {
+        let defaultRequestParams = ["page": "\(page)", "api_key": App.apiKey, "format": "json", "nojsoncallback": "1"]
         return search.params
-            .merging(["page": "\(page)", "api_key": App.apiKey]) { $1 }
+            .merging(defaultRequestParams) { $1 }
     }
 
     var headers: [String: String]? {
@@ -60,6 +61,15 @@ struct FlickrSearchTarget: FlickrSearchTargetType {
 
     private var flickrMethod: String {
         return search.path
+    }
+
+    var contentTitle: String {
+        switch search {
+        case .search(let text):
+            return text
+        case .userPhotos(let owner), .userDetail(let owner):
+            return owner.name
+        }
     }
 }
 
