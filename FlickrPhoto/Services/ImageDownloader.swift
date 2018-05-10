@@ -15,9 +15,13 @@ enum ProgressImage {
 class ImageDownloader {
 
     static let shared = ImageDownloader()
-    private init() {}
+    private init() {
+        cache.countLimit = 50
+        cache.totalCostLimit = 100
+    }
 
     private let cache = NSCache<NSString, UIImage>()
+
     private let serialQueueScheduler = SerialDispatchQueueScheduler(qos: .default)
 
     func imageFor(_ urlString: String) -> Driver<ImageDownloadSource> {
