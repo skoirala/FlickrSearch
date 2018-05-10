@@ -13,7 +13,8 @@ class Request<T: TargetType, M: EmptyValueType & Decodable>: RequestType {
 
     private let action: Action<T, M>
 
-    init(loadTrigger: Observable<T>) {
+    init(loadTrigger: Observable<T>,
+         enabledIf: Observable<Bool>) {
         self.loadTrigger = loadTrigger
 
         disposeBag = DisposeBag()
@@ -24,7 +25,7 @@ class Request<T: TargetType, M: EmptyValueType & Decodable>: RequestType {
 
         self.model = model.asDriver()
 
-        action = Action { target in
+        action = Action (enabledIf: enabledIf) { target in
             return provider.rx.request(target)
                 .map(M.self)
         }
