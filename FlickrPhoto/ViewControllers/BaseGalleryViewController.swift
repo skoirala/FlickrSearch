@@ -4,9 +4,11 @@ import RxCocoa
 import RxDataSources
 import CHTCollectionViewWaterfallLayout
 
-class BaseGalleryViewController: UIViewController {
+typealias GalleryViewController = UIViewController & UICollectionViewDelegate & CHTCollectionViewDelegateWaterfallLayout
 
-    let viewModel: FlickrPhotoSearchViewModel!
+class BaseGalleryViewController<T: FlickrPhotoViewModelType>: GalleryViewController {
+
+    let viewModel: T!
     var collectionViewLayout: CHTCollectionViewWaterfallLayout!
     var collectionView: UICollectionView!
 
@@ -18,7 +20,7 @@ class BaseGalleryViewController: UIViewController {
     private var errorView: UIView!
     private var errorLabel: UILabel!
 
-    init(with viewModel: FlickrPhotoSearchViewModel) {
+    init(with viewModel: T) {
         self.viewModel = viewModel
 
         super.init(nibName: nil,
@@ -165,10 +167,39 @@ class BaseGalleryViewController: UIViewController {
             .drive(activityIndicatorView.rx.isAnimating)
             .disposed(by: disposeBag)
     }
+    
+    func collectionView(_ collectionView: UICollectionView!,
+                        layout collectionViewLayout: UICollectionViewLayout!,
+                        sizeForItemAt indexPath: IndexPath!) -> CGSize {
+        guard let model = try? dataSource.model(at: indexPath),
+            let photoModel = model as? Photo,
+            let size = photoModel.photoURLs.suffix(3).first else {
+                return .zero
+        }
+        return CGSize(width: CGFloat(size.width), height: CGFloat(size.height))
+    }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        collectionView.reloadData()
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
+        guard let model = try? dataSource.model(at: indexPath),
+            let photo = model as? Photo,
+            let photoURL = photo.photoURLs.last else {
+                return
+        }
+
+        showPhotoViewController(for: photoURL,
+                                at: indexPath)
+    }
+
+    func createHeaderView(for collectionView: UICollectionView,
+                          at indexPath: IndexPath) -> UICollectionReusableView {
+        fatalError("Not implemented base class should implement")
+    }
+
+    private func createFooterView(for collectionView: UICollectionView,
+                                  at indexPath: IndexPath) -> UICollectionReusableView {
+        let loadingView: LoadingIndicatorSupplementaryView = collectionView.dequeueSupplementaryView(kind: CHTCollectionElementKindSectionFooter, for: indexPath)
+        return loadingView
     }
 }
 
@@ -221,47 +252,9 @@ extension BaseGalleryViewController {
                                 at: indexPath)
     }
 
-    @objc
-    func createHeaderView(for collectionView: UICollectionView,
-                          at indexPath: IndexPath) -> UICollectionReusableView {
-        fatalError("Not implemented base class should implement")
-    }
-
-    private func createFooterView(for collectionView: UICollectionView,
-                                  at indexPath: IndexPath) -> UICollectionReusableView {
-        let loadingView: LoadingIndicatorSupplementaryView = collectionView.dequeueSupplementaryView(kind: CHTCollectionElementKindSectionFooter, for: indexPath)
-        return loadingView
-    }
-
     private func showPhotoViewController(for photo: PhotoURL,
                                          at indexPath: IndexPath) {
         viewModel.showPhotoView(at: indexPath)
     }
-}
 
-// MARK: UICollectionViewDelegate, CHTCollectionViewDelegateWaterfallLayout
-extension BaseGalleryViewController: UICollectionViewDelegate, CHTCollectionViewDelegateWaterfallLayout {
-
-    func collectionView(_ collectionView: UICollectionView!,
-                        layout collectionViewLayout: UICollectionViewLayout!,
-                        sizeForItemAt indexPath: IndexPath!) -> CGSize {
-        guard let model = try? dataSource.model(at: indexPath),
-            let photoModel = model as? Photo,
-            let size = photoModel.photoURLs.suffix(3).first else {
-                return .zero
-        }
-        return CGSize(width: CGFloat(size.width), height: CGFloat(size.height))
-    }
-
-    func collectionView(_ collectionView: UICollectionView,
-                        didSelectItemAt indexPath: IndexPath) {
-        guard let model = try? dataSource.model(at: indexPath),
-            let photo = model as? Photo,
-            let photoURL = photo.photoURLs.last else {
-                return
-        }
-
-        showPhotoViewController(for: photoURL,
-                                at: indexPath)
-    }
 }

@@ -74,13 +74,13 @@ class PaginationRequest<T: PaginationTargetType, M: Decodable & EmptyValueType, 
             return target.next(after: page)
         }.share(replay: 1, scope: .forever)
 
-        let nextPageTarget = sharedNextPageTrigger.withLatestFrom(targetTrigger)
+        let nextPageTarget = sharedNextPageTrigger.withLatestFrom(sharedTarget)
             .withLatestFrom(page) { target, page in
                 return target.next(after: page)
         }.share(replay: 1, scope: .forever)
 
         request = Request(loadTrigger: Observable.merge(pageTarget, nextPageTarget),
-                          enabledIf:enabled)
+                          enabledIf: enabled)
 
         let elements = request.model
 

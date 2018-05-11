@@ -16,14 +16,10 @@ class Router {
             return false
         }
 
-        let owner = PhotoOwner(identifier: "68329145@N05",
-                               name: "")
-
-        let searchTarget: FlickrSearchTarget = .user(owner)
+        let searchTarget: FlickrSearchTarget = .text("Wild")
 
         let viewModel = FlickrPhotoSearchViewModel(search: searchTarget,
-                                                   router: self,
-                                                   searchEnabled: true)
+                                                   router: self)
 
         let rootViewController = FlickrPhotoSearchViewController(with: viewModel)
         navigationController = UINavigationController(rootViewController: rootViewController)
@@ -43,13 +39,9 @@ class Router {
     }
 
     func showUser(photo: Photo) {
-
-        let searchTarget: FlickrSearchTarget = .user(photo.owner)
-
-        let viewModel = FlickrPhotoSearchViewModel(search: searchTarget,
-                                                   router: self,
-                                                   searchEnabled: false)
-        let viewController = UserProfileViewController(with: viewModel)
+        let userViewModel = UserPhotosViewModel(owner: photo.owner,
+                                                router: self)
+        let viewController = UserProfileViewController(with: userViewModel)
         navigationController.pushViewController(viewController,
                                                 animated: true)
     }

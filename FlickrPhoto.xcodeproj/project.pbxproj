@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C3E941C20A5E1E500689901 /* UserPhotosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3E941B20A5E1E500689901 /* UserPhotosViewModel.swift */; };
+		2C3E941E20A5E22700689901 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3E941D20A5E22700689901 /* UserProfileViewController.swift */; };
+		2C3E942020A5E27E00689901 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3E941F20A5E27E00689901 /* User.swift */; };
 		2C55DE1C20968A010092C94A /* UIScrollView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C55DDE120968A000092C94A /* UIScrollView+Rx.swift */; };
 		2C55DE1D20968A010092C94A /* UISearchBar+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C55DDE220968A000092C94A /* UISearchBar+Rx.swift */; };
 		2C55DE1E20968A010092C94A /* UIScrollView+ZoomRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C55DDE320968A000092C94A /* UIScrollView+ZoomRect.swift */; };
@@ -64,6 +67,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C3E941B20A5E1E500689901 /* UserPhotosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPhotosViewModel.swift; sourceTree = "<group>"; };
+		2C3E941D20A5E22700689901 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
+		2C3E941F20A5E27E00689901 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		2C55DDE120968A000092C94A /* UIScrollView+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Rx.swift"; sourceTree = "<group>"; };
 		2C55DDE220968A000092C94A /* UISearchBar+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UISearchBar+Rx.swift"; sourceTree = "<group>"; };
 		2C55DDE320968A000092C94A /* UIScrollView+ZoomRect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+ZoomRect.swift"; sourceTree = "<group>"; };
@@ -157,6 +163,7 @@
 				2C55DDEB20968A000092C94A /* FlickrPhotoSearchViewController.swift */,
 				2C55DDEC20968A000092C94A /* SearchSuggestionsViewController.swift */,
 				2CDF035920A1D5720026A00A /* BaseGalleryViewController.swift */,
+				2C3E941D20A5E22700689901 /* UserProfileViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -183,6 +190,7 @@
 				2C55DDFC20968A000092C94A /* ReuseableView.swift */,
 				2C7E958120A19A6900A55B5F /* PaginationTargetType.swift */,
 				2C7E958520A19B2400A55B5F /* FlickrSearchTargetType.swift */,
+				2C3E941B20A5E1E500689901 /* UserPhotosViewModel.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -246,6 +254,7 @@
 				2C55DE1B20968A010092C94A /* FlickrTarget.swift */,
 				2C55DE4E2096DDBF0092C94A /* AppKeys.swift */,
 				2C7E958320A19AF300A55B5F /* FlickrSearch.swift */,
+				2C3E941F20A5E27E00689901 /* User.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -468,6 +477,7 @@
 				2C55DE2620968A010092C94A /* SearchSuggestionsViewController.swift in Sources */,
 				2C55DE2B20968A010092C94A /* PaginatedSearchRequestType.swift in Sources */,
 				2C55DE3E20968A010092C94A /* FlickrPhotoSearchViewModel.swift in Sources */,
+				2C3E941E20A5E22700689901 /* UserProfileViewController.swift in Sources */,
 				2C55DE3120968A010092C94A /* RequestType.swift in Sources */,
 				2C55DE2D20968A010092C94A /* FlickrSearchViewModelType.swift in Sources */,
 				2C55DE4320968A010092C94A /* Router.swift in Sources */,
@@ -493,6 +503,7 @@
 				2C55DE4C20968A010092C94A /* DecodingError.swift in Sources */,
 				2C55DE4A20968A010092C94A /* PageDetailType.swift in Sources */,
 				2C55DE2C20968A010092C94A /* EmptyValueType.swift in Sources */,
+				2C3E942020A5E27E00689901 /* User.swift in Sources */,
 				2C55DE2320968A010092C94A /* UICollectionView+Reuse.swift in Sources */,
 				2C7E958620A19B2400A55B5F /* FlickrSearchTargetType.swift in Sources */,
 				2C55DE4820968A010092C94A /* LargeImageItem.swift in Sources */,
@@ -506,6 +517,7 @@
 				2C55DE2220968A010092C94A /* ProgressiveImageDownload+Rx.swift in Sources */,
 				2C55DE1D20968A010092C94A /* UISearchBar+Rx.swift in Sources */,
 				2C7E958220A19A6900A55B5F /* PaginationTargetType.swift in Sources */,
+				2C3E941C20A5E1E500689901 /* UserPhotosViewModel.swift in Sources */,
 				2C55DE1F20968A010092C94A /* UISearchController+Rx.swift in Sources */,
 				2C55DE4B20968A010092C94A /* Photo.swift in Sources */,
 				2C55DE4F2096DDBF0092C94A /* AppKeys.swift in Sources */,

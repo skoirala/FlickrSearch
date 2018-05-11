@@ -4,67 +4,25 @@ import Moya
 import Action
 import RxDataSources
 
-class FlickrPhotoSearchViewModel {
-
-    enum ResultType {
-        case reset
-        case nextPage(response: PhotoResponse)
-    }
-
-    func showPhotoView(at indexPath: IndexPath) {
-        router.showImageCollection(at: indexPath, with: searchRequest)
-    }
-
-    var model: Driver<[SectionItem<Photo>]> {
-        return searchRequest.model
-            .map { [SectionItem(model: "", items: $0)] }
-    }
-
-    var canLoadNextPage: Driver<Bool> {
-        return searchRequest.canLoadNextPage
-    }
-
-    var isLoading: Driver<Bool> {
-        return searchRequest.isLoading
-    }
-
-    var emptyResult: Driver<Bool> {
-        return searchRequest.isResultEmpty
-    }
-
-    var searchResultChanged: Driver<Bool> {
-        return searchRequest.isLoadingNewTarget
-    }
+class FlickrPhotoSearchViewModel: FlickrPhotoViewModelType {
 
     func bind(searchText: PublishRelay<String>) {
         searchText.bind(to: self.searchText)
             .disposed(by: disposeBag)
     }
 
-    func bind(nextPageTrigger: ControlEvent<Void>) {
-        nextPageTrigger.bind(to: self.nextPageTrigger)
-            .disposed(by: disposeBag)
-    }
-
-    private let searchRequest: FlickerSearchRequest
-
-    private let search: FlickrSearchTarget
-    let searchEnabled: Bool
+    let searchRequest: FlickerSearchRequest
+    let disposeBag = DisposeBag()
+    let router: Router
     let title: Driver<String>
+    let nextPageTrigger: PublishRelay<()>
 
-    private let disposeBag = DisposeBag()
-    private let router: Router
-
-    private let nextPageTrigger: PublishRelay<()>
     private let searchText: PublishRelay<String>
 
     required init(search: FlickrSearchTarget,
-                  router: Router,
-                  searchEnabled: Bool) {
-        self.search = search
+                  router: Router) {
         self.router = router
-        self.searchEnabled = searchEnabled
-
+        
         nextPageTrigger = PublishRelay()
         searchText = PublishRelay()
 

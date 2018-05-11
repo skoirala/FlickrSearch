@@ -19,7 +19,7 @@ class Request<T: TargetType, M: EmptyValueType & Decodable>: RequestType {
 
         disposeBag = DisposeBag()
 
-        let provider = MoyaProvider<T>(plugins: [NetworkLoggerPlugin()])
+        let provider = MoyaProvider<T>()
 
         let model = BehaviorRelay(value: M.emptyValue)
 
